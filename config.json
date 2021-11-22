@@ -1,13 +1,7 @@
 {
-  "server": {
-    "address": ":8080"
-  },
-  "context":{
-    "timeout":2
-  },
   "database": {
     "host": "localhost",
-    "port": "8080",
+    "port": 5432,
     "user": "postgres",
     "pass": "postgres",
     "name": "phonebook"

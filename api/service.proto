@@ -11,7 +11,7 @@ option go_package = "crud";
 
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
   info: {
-    title: "Catalogs"
+    title: "Crud"
   }
 };
 

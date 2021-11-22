@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Catalogs",
+    "title": "Crud",
     "version": "version not set"
   },
   "consumes": [

@@ -2,16 +2,24 @@ package main
 
 import (
 	"context"
+	"go.uber.org/zap"
 	"log"
+	"net"
+	"net/http"
 	"time"
 
-	"github.com/labstack/echo"
+	"github.com/lubovskiy/crud/helpers/shutdown"
 	"github.com/lubovskiy/crud/infrastructure/database"
 	"github.com/lubovskiy/crud/internal/config"
-	"github.com/spf13/viper"
+	"github.com/lubovskiy/crud/internal/service"
+	"github.com/lubovskiy/crud/pkg/crud"
+	"github.com/soheilhy/cmux"
+	"google.golang.org/grpc"
+)
 
-
-	"github.com/lubovskiy/crud/pkg/api"
+const (
+	HTTPServerReadTimeout  = time.Minute
+	HTTPServerWriteTimeout = time.Minute
 )
 
 func main() {
@@ -29,16 +37,58 @@ func main() {
 		log.Fatal(err)
 	}
 
+	srv := grpc.NewServer()
 
-	e := echo.New()
-	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
-	e.Use(middL.CORS)
-	authorRepo := _authorRepo.NewMysqlAuthorRepository(dbConn)
-	ar := _articleRepo.NewMysqlArticleRepository(dbConn)
+	mux := http.NewServeMux()
+	httpServer := &http.Server{
+		Handler:      mux,
+		ReadTimeout:  HTTPServerReadTimeout,
+		WriteTimeout: HTTPServerWriteTimeout,
+	}
 
-	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
-	au := _articleUcase.NewArticleUsecase(ar, authorRepo, timeoutContext)
-	_articleHttpDelivery.NewArticleHandler(e, au)
+	run(ctx, srv, httpServer)
+}
 
-	log.Fatal(e.Start(viper.GetString("server.address")))
+func run(ctx context.Context, grpcServer *grpc.Server, httpServer *http.Server) {
+	logger, _ := zap.NewProduction()
+
+	sigHandler := shutdown.TermSignalTrap()
+
+	ls, err := net.Listen("tcp", ":8081")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	crud.RegisterContactsServer(grpcServer, service.NewParcelChangesService())
+
+	go func() {
+		err := grpcServer.Serve(ls)
+		if err != nil && err != cmux.ErrServerClosed {
+			log.Fatal("grpc server serve error")
+		}
+	}()
+
+	mux := cmux.New(ls)
+	httpListener := mux.Match(cmux.HTTP1Fast())
+
+	go func() {
+		err := httpServer.Serve(httpListener)
+		if err != nil && err != http.ErrServerClosed {
+			log.Fatal("https server serve error")
+		}
+	}()
+
+	err = sigHandler.Wait(ctx)
+	if err != nil && err != shutdown.ErrTermSig && err != context.Canceled {
+		logger.Error("failed to caught signal")
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*30)
+	defer cancel()
+	err = httpServer.Shutdown(ctx)
+	if err != nil {
+		logger.Error("failed to shutdown http server")
+	}
+
+	grpcServer.GracefulStop()
 }
