@@ -3,6 +3,7 @@ syntax = "proto3";
 package api.crud;
 
 import "google/protobuf/wrappers.proto";
+import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 option go_package = "crud";
 
@@ -23,14 +24,14 @@ message Contact {
 
 message ListContactsRequest {
   // фильтры для отбора записей
-  ListCityFilter filter = 1;
+  ListContactFilter filter = 1;
   // список названий полей, которые возвращать в ответе (при отсутствии возвращаем все параметры)
   repeated ContactFieldNum returnedFields = 2;
   // ограничение числа возвращаемых записей
   google.protobuf.Int32Value limit = 3;
 }
 
-message ListCityFilter {
+message ListContactFilter {
   // список id
   repeated int64 ids = 1;
   // список имен
@@ -41,5 +42,41 @@ message ListCityFilter {
 
 message ListContactsResponse {
   // контакты
-  repeated Contact cities = 1;
+  repeated Contact contacts = 1;
+}
+
+message AddContactRequest {
+  // новая запись
+  AddContact contact = 1;
+}
+
+message AddContact {
+  // имя
+  repeated string names = 1 [(validator.field) = {msg_exists : true}];
+  // телефон
+  repeated string phones = 2 [(validator.field) = {msg_exists : true}];
+}
+
+message IsErr {
+  // ошибка(если возникла)
+  google.protobuf.StringValue err = 1;
+}
+
+message UpdateContactRequest {
+  // новая запись
+  ContactUpdate contact = 1;
+}
+
+message ContactUpdate {
+  // id записи
+  google.protobuf.Int64Value id = 1 [(validator.field) = {msg_exists : true}];
+  // имя
+  google.protobuf.StringValue name = 2;
+  // телефон
+  google.protobuf.StringValue phone = 3;
+}
+
+message DeleteContactRequest {
+  // id записи
+  google.protobuf.Int64Value id = 1 [(validator.field) = {msg_exists : true}];
 }

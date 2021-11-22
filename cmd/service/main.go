@@ -8,9 +8,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lubovskiy/crud/helpers/shutdown"
 	"github.com/lubovskiy/crud/infrastructure/database"
 	"github.com/lubovskiy/crud/internal/config"
+	"github.com/lubovskiy/crud/internal/repository/phonebook"
 	"github.com/lubovskiy/crud/internal/service"
 	"github.com/lubovskiy/crud/pkg/crud"
 	"github.com/soheilhy/cmux"
@@ -46,10 +48,12 @@ func main() {
 		WriteTimeout: HTTPServerWriteTimeout,
 	}
 
-	run(ctx, srv, httpServer)
+	run(ctx, srv, httpServer, conn)
 }
 
-func run(ctx context.Context, grpcServer *grpc.Server, httpServer *http.Server) {
+func run(ctx context.Context, grpcServer *grpc.Server, httpServer *http.Server, conn *pgxpool.Pool) {
+	pb := phonebook.NewRepository(conn)
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatal(err)
@@ -63,7 +67,7 @@ func run(ctx context.Context, grpcServer *grpc.Server, httpServer *http.Server) 
 		log.Fatal(err)
 	}
 
-	crud.RegisterContactsServer(grpcServer, service.NewParcelChangesService())
+	crud.RegisterContactsServer(grpcServer, service.NewPhonebookService(pb))
 
 	go func() {
 		err := grpcServer.Serve(ls)

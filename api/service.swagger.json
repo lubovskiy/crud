@@ -11,10 +11,92 @@
     "application/json"
   ],
   "paths": {
-    "/v1/contact/list": {
+    "/v1/contacts/add": {
       "get": {
-        "summary": "ListContact",
-        "description": "Возвращаем список контактов",
+        "summary": "AddContacts",
+        "description": "Добавить новый контакт",
+        "operationId": "AddContact",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/crudIsErr"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "contact.names",
+            "description": "имя.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "contact.phones",
+            "description": "телефон.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      }
+    },
+    "/v1/contacts/delete": {
+      "get": {
+        "summary": "AddContacts",
+        "description": "Добавить новый контакт",
+        "operationId": "DeleteContact",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/crudIsErr"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "id записи.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      }
+    },
+    "/v1/contacts/list": {
+      "get": {
+        "summary": "ListContacts",
+        "description": "Получить список контактов",
         "operationId": "ListContacts",
         "responses": {
           "200": {
@@ -94,6 +176,54 @@
           "Contacts"
         ]
       }
+    },
+    "/v1/contacts/update": {
+      "get": {
+        "summary": "AddContacts",
+        "description": "Добавить новый контакт",
+        "operationId": "UpdateContact",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/crudIsErr"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "contact.id",
+            "description": "id записи.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "contact.name",
+            "description": "имя.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "contact.phone",
+            "description": "телефон.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      }
     }
   },
   "definitions": {
@@ -115,6 +245,25 @@
         }
       }
     },
+    "crudAddContact": {
+      "type": "object",
+      "properties": {
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "имя"
+        },
+        "phones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "телефон"
+        }
+      }
+    },
     "crudContactFieldNum": {
       "type": "string",
       "enum": [
@@ -124,7 +273,34 @@
       ],
       "default": "C_ID"
     },
-    "crudListCityFilter": {
+    "crudContactUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "id записи"
+        },
+        "name": {
+          "type": "string",
+          "title": "имя"
+        },
+        "phone": {
+          "type": "string",
+          "title": "телефон"
+        }
+      }
+    },
+    "crudIsErr": {
+      "type": "object",
+      "properties": {
+        "err": {
+          "type": "string",
+          "title": "ошибка(если возникла)"
+        }
+      }
+    },
+    "crudListContactFilter": {
       "type": "object",
       "properties": {
         "ids": {
@@ -154,7 +330,7 @@
     "crudListContactsResponse": {
       "type": "object",
       "properties": {
-        "cities": {
+        "contacts": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/apicrudContact"

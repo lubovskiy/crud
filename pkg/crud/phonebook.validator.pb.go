@@ -8,6 +8,7 @@ import (
 	math "math"
 	proto "github.com/golang/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -47,15 +48,78 @@ func (this *ListContactsRequest) Validate() error {
 	}
 	return nil
 }
-func (this *ListCityFilter) Validate() error {
+func (this *ListContactFilter) Validate() error {
 	return nil
 }
 func (this *ListContactsResponse) Validate() error {
-	for _, item := range this.Cities {
+	for _, item := range this.Contacts {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Cities", err)
+				return github_com_mwitkow_go_proto_validators.FieldError("Contacts", err)
 			}
+		}
+	}
+	return nil
+}
+func (this *AddContactRequest) Validate() error {
+	if this.Contact != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Contact); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Contact", err)
+		}
+	}
+	return nil
+}
+func (this *AddContact) Validate() error {
+	for _, item := range this.Names {
+	}
+	for _, item := range this.Phones {
+	}
+	return nil
+}
+func (this *IsErr) Validate() error {
+	if this.Err != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Err); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Err", err)
+		}
+	}
+	return nil
+}
+func (this *UpdateContactRequest) Validate() error {
+	if this.Contact != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Contact); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Contact", err)
+		}
+	}
+	return nil
+}
+func (this *ContactUpdate) Validate() error {
+	if nil == this.Id {
+		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+	}
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.Phone != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Phone); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Phone", err)
+		}
+	}
+	return nil
+}
+func (this *DeleteContactRequest) Validate() error {
+	if nil == this.Id {
+		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+	}
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	return nil

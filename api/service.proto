@@ -2,10 +2,9 @@ syntax = "proto3";
 
 package api.crud;
 
+import "phonebook.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
-
-import "phonebook.proto";
 
 option go_package = "crud";
 
@@ -21,7 +20,28 @@ service Contacts {
     option (google.api.http) = { get: "/v1/contacts/list" };
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
       summary: "ListContacts"
-      description: "Возвращаем список контактов"
+      description: "Получить список контактов"
+    };
+  }
+  rpc AddContact (AddContactRequest) returns (IsErr) {
+    option (google.api.http) = { get: "/v1/contacts/add" };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      summary: "AddContacts"
+      description: "Добавить новый контакт"
+    };
+  }
+  rpc UpdateContact (UpdateContactRequest) returns (IsErr) {
+    option (google.api.http) = { get: "/v1/contacts/update" };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      summary: "AddContacts"
+      description: "Добавить новый контакт"
+    };
+  }
+  rpc DeleteContact (DeleteContactRequest) returns (IsErr) {
+    option (google.api.http) = { get: "/v1/contacts/delete" };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      summary: "AddContacts"
+      description: "Добавить новый контакт"
     };
   }
 }

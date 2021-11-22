@@ -7,7 +7,7 @@ import (
 
 type Params struct {
 	ReturnedFields []string
-	Limits         *int
+	Limits         *int32
 }
 
 func (p *Params) Gen(fields []string) (limits []string, retFields []string) {
