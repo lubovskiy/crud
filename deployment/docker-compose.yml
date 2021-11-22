@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: phonebook
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 6379:6379
+
+  app:
+    build: .
+    command: ["go", "run", "main.go"]
+    privileged: true
+    environment:
+      GET_HOSTS_FROM: dns
+      POSTGRES_DB: dev
+      POSTGRES_USER: postgres-dev
+      POSTGRES_PASSWORD: password
+      GIN_MODE: release
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # - /usr/bin/docker:/bin/docker
+      - /usr/local/bin/docker:/bin/docker
+      - .:/go/src/app/
+    ports:
+      - "443:443"
+    depends_on:
+      - postgres
+      - redis
+    links:
+      - postgres
+      - redis
