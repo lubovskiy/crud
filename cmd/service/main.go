@@ -50,11 +50,15 @@ func main() {
 }
 
 func run(ctx context.Context, grpcServer *grpc.Server, httpServer *http.Server) {
-	logger, _ := zap.NewProduction()
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logger.Sync()
 
 	sigHandler := shutdown.TermSignalTrap()
 
-	ls, err := net.Listen("tcp", ":8081")
+	ls, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,6 +80,7 @@ func run(ctx context.Context, grpcServer *grpc.Server, httpServer *http.Server) 
 		if err != nil && err != http.ErrServerClosed {
 			log.Fatal("https server serve error")
 		}
+		logger.Info("http listener started")
 	}()
 
 	err = sigHandler.Wait(ctx)

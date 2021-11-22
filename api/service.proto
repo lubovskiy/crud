@@ -18,9 +18,9 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 // Контакты
 service Contacts {
   rpc ListContacts (ListContactsRequest) returns (ListContactsResponse) {
-    option (google.api.http) = { get: "/v1/contact/list" };
+    option (google.api.http) = { get: "/v1/contacts/list" };
     option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-      summary: "ListContact"
+      summary: "ListContacts"
       description: "Возвращаем список контактов"
     };
   }

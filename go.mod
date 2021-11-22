@@ -7,6 +7,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/jackc/pgx/v4 v4.14.0
 	github.com/mwitkow/go-proto-validators v0.3.2
+	github.com/pkg/errors v0.8.1
 	github.com/soheilhy/cmux v0.1.5
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
