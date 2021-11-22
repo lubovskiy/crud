@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package api.crud;
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+import "phonebook.proto";
+
+option go_package = "crud";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+  info: {
+    title: "Catalogs"
+  }
+};
+
+// Контакты
+service Contacts {
+  rpc ListContacts (ListContactsRequest) returns (ListContactsResponse) {
+    option (google.api.http) = { get: "/v1/contact/list" };
+    option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      summary: "ListContact"
+      description: "Возвращаем список контактов"
+    };
+  }
+}

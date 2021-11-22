@@ -1,1 +1,45 @@
-package api
+syntax = "proto3";
+
+package api.crud;
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "crud";
+
+enum ContactFieldNum {
+  C_ID = 0;
+  C_NAME = 1;
+  C_PHONE = 2;
+}
+
+message Contact {
+  // id записи
+  google.protobuf.Int64Value id = 1;
+  // имя
+  google.protobuf.StringValue name = 2;
+  // телефон
+  google.protobuf.StringValue phone = 3;
+}
+
+message ListContactsRequest {
+  // фильтры для отбора записей
+  ListCityFilter filter = 1;
+  // список названий полей, которые возвращать в ответе (при отсутствии возвращаем все параметры)
+  repeated ContactFieldNum returnedFields = 2;
+  // ограничение числа возвращаемых записей
+  google.protobuf.Int32Value limit = 3;
+}
+
+message ListCityFilter {
+  // список id
+  repeated int64 ids = 1;
+  // список имен
+  repeated string names = 2;
+  // список телефонов
+  repeated string phones = 3;
+}
+
+message ListContactsResponse {
+  // контакты
+  repeated Contact cities = 1;
+}

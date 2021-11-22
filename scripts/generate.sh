@@ -31,25 +31,25 @@ function setup_proto_deps {
 
 setup_proto_deps
 
-PACKAGE_DIR=${GOPATH}/src/github.com/lubovskiy/crud
-DST_DIR=${PACKAGE_DIR}/pkg/api
-INCLUDE="-I${PACKAGE_DIR}/api \
--I${GOPATH}/deps/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
--I${GOPATH}/deps/github.com/grpc-ecosystem/grpc-gateway \
--I/usr/local/include \
--I${GOPATH}/deps \
--I. -I${GOPATH}/src"
-
-rm -rf ${DST_DIR}/*.pb.*
-
-# generate code
-protoc ${INCLUDE} \
---go_out=plugins=grpc:${DST_DIR} \
---grpc-gateway_out=logtostderr=true:${DST_DIR} \
---govalidators_out=${DST_DIR} \
-${PACKAGE_DIR}/api/*.proto
-
-# generate service.swagger.json
-protoc ${INCLUDE} \
---swagger_out=${PACKAGE_DIR}/api \
-${PACKAGE_DIR}/api/service.proto
+#PACKAGE_DIR=${GOPATH}/src/github.com/lubovskiy/crud
+#DST_DIR=${PACKAGE_DIR}/pkg/api
+#INCLUDE="-I${PACKAGE_DIR}/api \
+#-I${GOPATH}/deps/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+#-I${GOPATH}/deps/github.com/grpc-ecosystem/grpc-gateway \
+#-I/usr/local/include \
+#-I${GOPATH}/deps \
+#-I. -I${GOPATH}/src"
+#
+#rm -rf ${DST_DIR}/*.pb.*
+#
+## generate code
+#protoc ${INCLUDE} \
+#--go_out=plugins=grpc:${DST_DIR} \
+#--grpc-gateway_out=logtostderr=true:${DST_DIR} \
+#--govalidators_out=${DST_DIR} \
+#${PACKAGE_DIR}/api/*.proto
+#
+## generate service.swagger.json
+#protoc ${INCLUDE} \
+#--swagger_out=${PACKAGE_DIR}/api \
+#${PACKAGE_DIR}/api/service.proto
