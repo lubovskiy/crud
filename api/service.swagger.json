@@ -32,26 +32,18 @@
         },
         "parameters": [
           {
-            "name": "contact.names",
+            "name": "name",
             "description": "имя.",
             "in": "query",
             "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
+            "type": "string"
           },
           {
-            "name": "contact.phones",
+            "name": "phone",
             "description": "телефон.",
             "in": "query",
             "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
+            "type": "string"
           }
         ],
         "tags": [
@@ -149,7 +141,7 @@
           },
           {
             "name": "returnedFields",
-            "description": "список названий полей, которые возвращать в ответе (при отсутствии возвращаем все параметры).",
+            "description": "список названий полей, которые возвращать в ответе. Deprecated - не успел).",
             "in": "query",
             "required": false,
             "type": "array",
@@ -198,7 +190,7 @@
         },
         "parameters": [
           {
-            "name": "contact.id",
+            "name": "id",
             "description": "id записи.",
             "in": "query",
             "required": false,
@@ -206,14 +198,14 @@
             "format": "int64"
           },
           {
-            "name": "contact.name",
+            "name": "name",
             "description": "имя.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "contact.phone",
+            "name": "phone",
             "description": "телефон.",
             "in": "query",
             "required": false,
@@ -245,25 +237,6 @@
         }
       }
     },
-    "crudAddContact": {
-      "type": "object",
-      "properties": {
-        "names": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "имя"
-        },
-        "phones": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "телефон"
-        }
-      }
-    },
     "crudContactFieldNum": {
       "type": "string",
       "enum": [
@@ -272,24 +245,6 @@
         "C_PHONE"
       ],
       "default": "C_ID"
-    },
-    "crudContactUpdate": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64",
-          "title": "id записи"
-        },
-        "name": {
-          "type": "string",
-          "title": "имя"
-        },
-        "phone": {
-          "type": "string",
-          "title": "телефон"
-        }
-      }
     },
     "crudIsErr": {
       "type": "object",

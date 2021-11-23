@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/lubovskiy/crud/infrastructure/database"
 	phonebookRepo "github.com/lubovskiy/crud/internal/repository/phonebook"
 	"github.com/lubovskiy/crud/pkg/crud"
@@ -30,6 +31,11 @@ func NewPhonebookService(repo phonebookRepo.Repositer) *PhonebookService {
 }
 
 func (p *PhonebookService) ListContacts(ctx context.Context, request *crud.ListContactsRequest) (*crud.ListContactsResponse, error) {
+	err := request.Validate()
+	if err != nil {
+		return nil, err
+	}
+
 	var filter *phonebookRepo.Filter
 	if request.Filter != nil {
 		filter = &phonebookRepo.Filter{
@@ -71,11 +77,11 @@ func getReturnFields(returnedFields []crud.ContactFieldNum) []string {
 func toContacts(r []*phonebookRepo.Model) []*crud.Contact {
 	res := make([]*crud.Contact, len(r))
 
-	for i, v := range res {
+	for i, v := range r {
 		res[i] = &crud.Contact{
-			Id:    v.Id,
-			Name:  v.Name,
-			Phone: v.Phone,
+			Id:    &wrappers.Int64Value{Value: v.ID},
+			Name:  &wrappers.StringValue{Value: v.Name},
+			Phone: &wrappers.StringValue{Value: v.Phone},
 		}
 	}
 
@@ -83,13 +89,69 @@ func toContacts(r []*phonebookRepo.Model) []*crud.Contact {
 }
 
 func (p *PhonebookService) AddContact(ctx context.Context, request *crud.AddContactRequest) (*crud.IsErr, error) {
-	panic("implement me")
+	err := request.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	model := &phonebookRepo.Model{
+		Name:  request.Name.Value,
+		Phone: request.Phone.Value,
+	}
+
+	_, err = p.repo.Upsert(ctx, model)
+	if err != nil {
+		return &crud.IsErr{
+			Err: &wrappers.StringValue{Value: err.Error()},
+		}, nil
+	}
+
+	return &crud.IsErr{}, nil
 }
 
 func (p *PhonebookService) UpdateContact(ctx context.Context, request *crud.UpdateContactRequest) (*crud.IsErr, error) {
-	panic("implement me")
+	err := request.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	model := &phonebookRepo.Model{
+		ID: request.Id.Value,
+	}
+
+	if request.Name != nil {
+		model.Name = request.Name.Value
+	}
+	if request.Phone != nil {
+		model.Phone = request.Phone.Value
+	}
+
+	err = p.repo.Update(ctx, model)
+	if err != nil {
+		return &crud.IsErr{
+			Err: &wrappers.StringValue{Value: err.Error()},
+		}, nil
+	}
+
+	return &crud.IsErr{}, nil
 }
 
 func (p *PhonebookService) DeleteContact(ctx context.Context, request *crud.DeleteContactRequest) (*crud.IsErr, error) {
-	panic("implement me")
+	err := request.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	filter := &phonebookRepo.Filter{
+		ID: []int64{request.Id.Value},
+	}
+
+	err = p.repo.Delete(ctx, filter)
+	if err != nil {
+		return &crud.IsErr{
+			Err: &wrappers.StringValue{Value: err.Error()},
+		}, nil
+	}
+
+	return &crud.IsErr{}, nil
 }

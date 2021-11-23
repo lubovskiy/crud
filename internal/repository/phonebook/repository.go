@@ -16,6 +16,7 @@ var (
 
 type Repositer interface {
 	Upsert(ctx context.Context, model *Model) (*Model, error)
+	Update(ctx context.Context, model *Model)  error
 	GetList(ctx context.Context, filter *Filter, params *database.Params) ([]*Model, error)
 	Delete(ctx context.Context, filter *Filter) error
 }
@@ -39,7 +40,9 @@ func (r *Repository) Upsert(ctx context.Context, model *Model) (*Model, error) {
 		VALUES
 			($1, $2)
 		ON CONFLICT ON CONSTRAINT phonebook_pkey
-			DO UPDATE SET LOAD = EXCLUDED.load
+			DO UPDATE SET 
+				name = EXCLUDED.name,
+				phone = EXCLUDED.phone
 		RETURNING ID`
 
 
@@ -60,6 +63,37 @@ func (r *Repository) Upsert(ctx context.Context, model *Model) (*Model, error) {
 	return model, nil
 }
 
+func (r *Repository) Update(ctx context.Context, model *Model) error {
+	if model == nil {
+		return ErrNil
+	}
+
+	query := `
+		INSERT INTO phonebook
+			(id, name, phone)
+		VALUES
+			($1, $2, $3)
+		ON CONFLICT ON CONSTRAINT phonebook_pkey
+			DO UPDATE SET 
+				name = EXCLUDED.name,
+				phone = EXCLUDED.phone`
+
+	arguments := []interface{}{(*model).ID, (*model).Name, (*model).Phone}
+
+	var id int64
+	_, err := r.Pool.Exec(
+		ctx, query, arguments...,
+	)
+	if err != nil {
+		return err
+	}
+
+	model.ID = id
+
+	return nil
+}
+
+
 func (r *Repository) GetList(ctx context.Context, filter *Filter, params *database.Params) ([]*Model, error) {
 	fields := []string{
 		"id",
@@ -67,12 +101,16 @@ func (r *Repository) GetList(ctx context.Context, filter *Filter, params *databa
 		"phone",
 	}
 
-	limits, retFields := params.Gen(fields)
+	limits, _ := params.Gen(fields)
 
-	qRetFields := strings.Join(retFields, ", ")
+	qRetFields := strings.Join(fields, ", ")
 	query := fmt.Sprintf("SELECT %s FROM phonebook", qRetFields)
 
-	conditions, arguments := filter.Filter()
+	conditions := make([]string, 0)
+	arguments := make([]interface{}, 0)
+	if filter != nil {
+		conditions, arguments = filter.Filter()
+	}
 
 	if len(conditions) > 0 {
 		query += " WHERE " + strings.Join(conditions, " AND\n ")

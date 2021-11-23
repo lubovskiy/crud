@@ -20,10 +20,11 @@ type Filter struct {
 
 func (f *Filter) Filter() (conditions []string, arguments []interface{}) {
 	gen := bind.SequentialGenerator{}
+	gen.Next()
 
 	if f.ID != nil {
 		conditions = append(conditions, fmt.Sprintf("id = ANY(%s::bigint[])", gen.NextBind()))
-		arguments = append(arguments, f.Name)
+		arguments = append(arguments, f.ID)
 	}
 
 	if f.Name != nil {

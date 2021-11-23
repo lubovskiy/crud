@@ -25,8 +25,8 @@ message Contact {
 message ListContactsRequest {
   // фильтры для отбора записей
   ListContactFilter filter = 1;
-  // список названий полей, которые возвращать в ответе (при отсутствии возвращаем все параметры)
-  repeated ContactFieldNum returnedFields = 2;
+  // список названий полей, которые возвращать в ответе. Deprecated - не успел)
+  repeated ContactFieldNum returnedFields = 2 [deprecated = true];
   // ограничение числа возвращаемых записей
   google.protobuf.Int32Value limit = 3;
 }
@@ -46,15 +46,10 @@ message ListContactsResponse {
 }
 
 message AddContactRequest {
-  // новая запись
-  AddContact contact = 1;
-}
-
-message AddContact {
   // имя
-  repeated string names = 1 [(validator.field) = {msg_exists : true}];
+  google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists : true}];
   // телефон
-  repeated string phones = 2 [(validator.field) = {msg_exists : true}];
+  google.protobuf.StringValue phone = 2 [(validator.field) = {msg_exists : true}];
 }
 
 message IsErr {
@@ -63,11 +58,6 @@ message IsErr {
 }
 
 message UpdateContactRequest {
-  // новая запись
-  ContactUpdate contact = 1;
-}
-
-message ContactUpdate {
   // id записи
   google.protobuf.Int64Value id = 1 [(validator.field) = {msg_exists : true}];
   // имя

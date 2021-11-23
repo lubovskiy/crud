@@ -62,17 +62,21 @@ func (this *ListContactsResponse) Validate() error {
 	return nil
 }
 func (this *AddContactRequest) Validate() error {
-	if this.Contact != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Contact); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Contact", err)
+	if nil == this.Name {
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+	}
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
-	return nil
-}
-func (this *AddContact) Validate() error {
-	for _, item := range this.Names {
+	if nil == this.Phone {
+		return github_com_mwitkow_go_proto_validators.FieldError("Phone", fmt.Errorf("message must exist"))
 	}
-	for _, item := range this.Phones {
+	if this.Phone != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Phone); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Phone", err)
+		}
 	}
 	return nil
 }
@@ -85,14 +89,6 @@ func (this *IsErr) Validate() error {
 	return nil
 }
 func (this *UpdateContactRequest) Validate() error {
-	if this.Contact != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Contact); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Contact", err)
-		}
-	}
-	return nil
-}
-func (this *ContactUpdate) Validate() error {
 	if nil == this.Id {
 		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
 	}
