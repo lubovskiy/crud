@@ -17,4 +17,7 @@ deploy:
 delete:
 	docker-compose down
 
-.PHONY: test engine clean docker run stop proto
+migrage:
+	migrate -path ./internal/migrations -database "postgres://postgres:postgres@localhost:5432/phonebook?sslmode=disable" up
+
+.PHONY: test engine clean docker run stop proto migrate

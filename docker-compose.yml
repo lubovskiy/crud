@@ -1,9 +1,10 @@
-version: "1.0"
+version: '3.8'
 
 services:
 
-  postgres:
+  pg:
     image: postgres
+    container_name: db_postgres
     restart: always
     environment:
       POSTGRES_DB: phonebook
@@ -11,6 +12,22 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - 5432:5432
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready"]
+#      interval: 10s
+#      timeout: 3s
+#      retries: 5
+#
+#  migrate:
+#    image: migrate/migrate
+#    volumes:
+#      - .:/migrations
+##    command: [ "-path", "migrations", "-database",  "postgres://postgres:postgres@db_postgres:5432/phonebook?sslmode=disable", "up"]
+#    links:
+#      - pg
+#    depends_on:
+#      - pg
+#    command: -path migrations -database postgres://postgres:postgres@db_postgres:5432/phonebook?sslmode=disable up
 
   redis:
     image: redis:latest
